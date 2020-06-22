@@ -7,8 +7,8 @@ Main class: IdentityV2, meant to be mixed-in to the FamilySearch class
 import random
 import time
 import urllib
-import urllib2
-import urlparse
+#import urllib2
+from urllib.parse import urlparse
 
 # Support Python < 2.6
 if not hasattr(urlparse, 'parse_qsl'):
@@ -34,9 +34,9 @@ class IdentityV2(object):
         # Assume logged_in if session_id is set
         self.logged_in = bool(self.session_id)
 
-        cookie_handler = urllib2.HTTPCookieProcessor()
+        cookie_handler = urllib.HTTPCookieProcessor()
         self.cookies = cookie_handler.cookiejar
-        self.opener = urllib2.build_opener(cookie_handler)
+        self.opener = urllib.build_opener(cookie_handler)
 
     @property
     def identity_properties(self):
@@ -214,11 +214,11 @@ class IdentityV2(object):
                              'oauth_timestamp': str(int(time.time())),
                             })
         data = urllib.urlencode(oauth_params, True)
-        request = urllib2.Request(url, data)
+        request = urllib.request(url, data)
         request.add_header('User-Agent', self.agent)
         try:
             return self.opener.open(request)
-        except urllib2.HTTPError, error:
+        except urllib.error as error:
             if error.code == 401:
                 self.logged_in = False
             raise
