@@ -68,8 +68,8 @@ match = fs.match('ABCD-123', id='EFGH-456')
 """
 
 import urllib
-import urllib2
-import urlparse
+#import urllib2
+from urllib.parse import urlparse
 
 # Support Python < 2.6
 if not hasattr(urlparse, 'parse_qs'):
@@ -134,7 +134,7 @@ class FamilySearch(object):
         self.key = key
         self.session_id = session
         self.base = base
-        self.opener = urllib2.build_opener()
+        self.opener = urllib.build_opener()
 
         for mixin in self.__class__.__bases__:
             mixin.__init__(self)
@@ -177,11 +177,11 @@ class FamilySearch(object):
         if self.logged_in and not self.cookies:
             # Add sessionId parameter to url if cookie is not set
             url = self._add_query_params(url, sessionId=self.session_id)
-        request = urllib2.Request(url, data)
+        request = urllib.request(url, data)
         request.add_header('User-Agent', self.agent)
         try:
             return self.opener.open(request)
-        except urllib2.HTTPError, error:
+        except urllib.error as error:
             if error.code == 401:
                 self.logged_in = False
             raise
